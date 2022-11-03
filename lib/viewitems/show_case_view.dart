@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/data/vos/movie_vo.dart';
+import 'package:movie_app/network/responses/api_constants.dart';
 import 'package:movie_app/resources/dimens.dart';
 import 'package:movie_app/widgets/play_button_view.dart';
 import 'package:movie_app/widgets/title_text.dart';
 
 class ShowCaseView extends StatelessWidget {
-  const ShowCaseView({Key? key}) : super(key: key);
+  Function(int) onTapMovie;
+  final MovieVO? mMovie;
+
+  ShowCaseView(this.mMovie, this.onTapMovie);
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +21,17 @@ class ShowCaseView extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.network("https://m.media-amazon.com/images/M/MV5BNzg1MDQxMTQ2OF5BMl5BanBnXkFtZTcwMTk3MjAzOQ@@._V1_FMjpg_UX1000_.jpg",
-                fit: BoxFit.cover,
+              child: Image.network(
+                "$IMAGE_BASE_URL${mMovie?.backDropPath}",
+                fit: BoxFit.fitHeight,
               ),
             ),
             Align(
               alignment: Alignment.center,
-              child: PlayButtonView(),
+              child: GestureDetector(
+                onTap: () => this.onTapMovie(mMovie?.id ?? 0) ,
+                child: PlayButtonView(),
+              ),
             ),
             Align(
               alignment: Alignment.bottomLeft,
@@ -33,15 +42,17 @@ class ShowCaseView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Passengers",
+                      "${mMovie?.originalTitle}",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: TEXT_REGULAR_3X,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: MARGIN_MEDIUM,),
-                    TitleText("15 DECEMBER 2016"),
+                    SizedBox(
+                      height: MARGIN_MEDIUM,
+                    ),
+                    TitleText("${mMovie?.releaseDate}"),
                   ],
                 ),
               ),

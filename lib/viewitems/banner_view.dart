@@ -1,42 +1,51 @@
 
 import 'package:flutter/material.dart';
-import 'package:movie_app/resources/colors.dart';
+import 'package:movie_app/data/vos/movie_vo.dart';
+import 'package:movie_app/network/responses/api_constants.dart';
 import 'package:movie_app/resources/dimens.dart';
 import 'package:movie_app/widgets/gradient_view.dart';
 
 import '../widgets/play_button_view.dart';
 
 class BannerView extends StatelessWidget {
-  const BannerView({Key? key}) : super(key: key);
+  Function(int) onTapBannerView;
+  final MovieVO? mMovie;
+
+  BannerView(this.mMovie,this.onTapBannerView);
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-            child: BannerImageView(),
-        ),
-        Positioned.fill(
-          child: GradientView(),
-        ),
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: BannerTitleView(),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: PlayButtonView(),
-        ),
-      ],
+    return GestureDetector(
+      onTap: (){
+        this.onTapBannerView(mMovie?.id ?? 0);
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+              child: BannerImageView(mMovie?.backDropPath),
+          ),
+          Positioned.fill(
+            child: GradientView(),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: BannerTitleView(mMovie?.title),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: PlayButtonView(),
+          ),
+        ],
+      ),
     );
   }
 }
 
 
 class BannerTitleView extends StatelessWidget {
-  const BannerTitleView({
-    Key? key,
-  }) : super(key: key);
+  final String? title;
+
+  BannerTitleView(this.title);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +55,7 @@ class BannerTitleView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("The wolverine 2013",
+          Text("${this.title}",
             style: TextStyle(
               color: Colors.white,
               fontSize: TEXT_HEADING_1X,
@@ -67,13 +76,13 @@ class BannerTitleView extends StatelessWidget {
 }
 
 class BannerImageView extends StatelessWidget {
-  const BannerImageView({
-    Key? key,
-  }) : super(key: key);
+  final String? movieImgPath;
+
+  BannerImageView(this.movieImgPath);
 
   @override
   Widget build(BuildContext context) {
-    return Image.network("https://m.media-amazon.com/images/M/MV5BNzg1MDQxMTQ2OF5BMl5BanBnXkFtZTcwMTk3MjAzOQ@@._V1_FMjpg_UX1000_.jpg",
+    return Image.network("$IMAGE_BASE_URL${movieImgPath}",
     fit : BoxFit.cover,
     );
   }
