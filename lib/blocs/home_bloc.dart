@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:movie_app/data/models/movie_model_impl.dart';
 import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/genre_vo.dart';
@@ -8,14 +9,15 @@ import 'package:movie_app/data/vos/genre_vo.dart';
 import '../data/models/movie_model.dart';
 import '../data/vos/movie_vo.dart';
 
-class HomeBloc{
-  ///Reactive Stream
-  StreamController<List<MovieVO>> mNowPlayingStreamController = StreamController();
-  StreamController<List<MovieVO>> mPopularMoviesListStreamController = StreamController();
-  StreamController<List<GenreVO>> mGenreListStreamController = StreamController();
-  StreamController<List<ActorVO>> mActorsStreamController = StreamController();
-  StreamController<List<MovieVO>> mShowCaseMovieListStreamController = StreamController();
-  StreamController<List<MovieVO?>> mMoviesByGenreListStreamController = StreamController();
+class HomeBloc extends ChangeNotifier{
+  ///States
+  List<MovieVO>? mNowPlayingMoviesList;
+  List<MovieVO>? mPopularMoviesList;
+  List<GenreVO>? mGenreList;
+  List<ActorVO>? mActors;
+  List<MovieVO>? mShowcaseMoviesList;
+  List<MovieVO>? mMoviesByGenreList;
+
 
   /// Models
 
@@ -24,61 +26,76 @@ class HomeBloc{
   HomeBloc(){
     /// Now Playing Movies from Database
     mMovieModel.getNowPlayingMoviesFromDatabase()?.then((movieList) {
-      mNowPlayingStreamController?.sink.add(movieList);
-    }).catchError((error) {});
+      mNowPlayingMoviesList = movieList;
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
 
     /// Popular Movies from Database
     mMovieModel.getPopularMoviesFromDatabase()?.then((movieList) {
-      mPopularMoviesListStreamController?.sink.add(movieList);
-    }).catchError((error) {});
+      mPopularMoviesList = movieList;
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
 
     /// ShowCases from Database
     mMovieModel.getTopRatedMoviesFromDatabase()?.then((movieList) {
-      mShowCaseMovieListStreamController?.sink.add(movieList);
-    }).catchError((error) {});
+      mShowcaseMoviesList = movieList;
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
     /// Genres
     mMovieModel.getGenres()?.then((genreList) {
-      mGenreListStreamController?.sink.add(genreList);
+      mGenreList = genreList;
       /// Movies By Genere
-      getMoviesByGenreAndRefresh(genreList.first.id ?? 0);
-    }).catchError((error) {});
+      _getMoviesByGenreAndRefresh(genreList.first.id ?? 0);
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
 
     /// Genres from Database
     mMovieModel.getGenresFromDatabase()?.then((genreList) {
-      mGenreListStreamController?.sink.add(genreList);
+      mGenreList = genreList;
       /// Movies By Genere
-      getMoviesByGenreAndRefresh(genreList.first.id ?? 0);
-    }).catchError((error) {});
+      _getMoviesByGenreAndRefresh(genreList.first.id ?? 0);
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
 
     /// Actors
     mMovieModel.getActors(1)?.then((actorsList) {
-      mActorsStreamController?.sink.add(actorsList);
-    }).catchError((error) {});
+      mActors = actorsList;
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
 
     /// Actors Database
     mMovieModel.getAllActorsFromDatabase()?.then((actorsList) {
-      mActorsStreamController?.sink.add(actorsList);
-    }).catchError((error) {});
+      mActors = actorsList;
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
 
 
   }
-  void getMoviesByGenreAndRefresh(int genreId){
+  void onTapGenre(int genreId){
+    _getMoviesByGenreAndRefresh(genreId);
+  }
+  void _getMoviesByGenreAndRefresh(int genreId){
     mMovieModel.getMoviesByGenre(genreId)?.then((movieByGenere) {
-      mMoviesByGenreListStreamController?.sink.add(movieByGenere);
-    }).catchError((error) {});
+      mMoviesByGenreList = movieByGenere;
+      notifyListeners();
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
   }
-
-  void dispose(){
-    mNowPlayingStreamController?.close();
-    mPopularMoviesListStreamController?.close();
-    mGenreListStreamController?.close();
-    mActorsStreamController?.close();
-    mShowCaseMovieListStreamController?.close();
-    mMoviesByGenreListStreamController?.close();
-
-  }
-
-
 
 
 }

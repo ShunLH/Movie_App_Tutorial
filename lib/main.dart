@@ -11,11 +11,8 @@ import 'package:movie_app/data/vos/movie_vo.dart';
 import 'package:movie_app/data/vos/production_companies_vo.dart';
 import 'package:movie_app/data/vos/production_countries_vo.dart';
 import 'package:movie_app/data/vos/spoken_languages_vo.dart';
-import 'package:movie_app/network/dataagents/retrofit_data_agent_impl.dart';
 import 'package:movie_app/pages/home_page.dart';
-import 'package:movie_app/pages/movie_detail_page.dart';
 import 'package:movie_app/persistance/hive_constants.dart';
-import 'package:scoped_model/scoped_model.dart';
 
 void main() async{
   await Hive.initFlutter();
@@ -46,9 +43,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScopedModel(
-      model: MovieModelImpl(),
-      child: MaterialApp(
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -57,7 +52,6 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: HomePage(),
-      ),
-    );
+      );
   }
 }
