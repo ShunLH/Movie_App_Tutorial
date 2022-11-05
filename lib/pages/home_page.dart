@@ -9,12 +9,11 @@ import 'package:movie_app/resources/colors.dart';
 import 'package:movie_app/viewitems/banner_view.dart';
 import 'package:movie_app/viewitems/show_case_view.dart';
 import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
-import 'package:movie_app/widgets/title_text.dart';
 import '../blocs/home_bloc.dart';
 import '../resources/dimens.dart';
 import '../resources/strings.dart';
-import '../viewitems/movie_view.dart';
 import '../widgets/see_more_text.dart';
+import '../widgets/title_and_horizontal_movie_list_view.dart';
 import '../widgets/title_text_with_see_more_view.dart';
 import 'package:provider/provider.dart';
 
@@ -74,10 +73,14 @@ class HomePage extends StatelessWidget {
                 Selector<HomeBloc, List<MovieVO>?>(
                   selector: (context,bloc) => bloc.mNowPlayingMoviesList,
                   builder: (context, nowPlayingList, child) {
-                    return BestPopularMoviesAndSerialsSectionView(
+                    return TitleAndHorizontalMovieListView(
+                      title: MAIN_SCREEN_BEST_POPULAR_MOVIES_AND_SERIALS,
                         (movieId) =>
                             _navigateToMovieDetailScreen(context, movieId),
-                        nowPlayingList);
+                        nowPlayingList,onListEndReached: (){
+                          var bloc = Provider.of<HomeBloc>(context,listen: false);
+                          bloc.onNowPlayingMoviesListEndReached();
+                    },);
                   },
                 ),
                 SizedBox(height: MARGIN_LARGE),
@@ -132,9 +135,6 @@ class HomePage extends StatelessWidget {
   }
 
   void _navigateToMovieDetailScreen(BuildContext context, int movieId) {
-    // movieModel.getMovieDetails(movieId);
-    // movieModel.getMovieDetailsFromDatabase(movieId);
-    // movieModel.getCreditsByMovie(movieId);
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -143,145 +143,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/*
-class _HomePageState extends State<HomePage> {
-  MovieModel? mMovieModel = MovieModelImpl();
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    ///Now Playing Movies
-    // mMovieModel?.getNowPlayingMovies(1)?.then((movieList) {
-    //   setState(() {
-    //     mNowPlayingMovieList = movieList;
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Now Playing Movies Database
-    // mMovieModel?.getNowPlayingMoviesFromDatabase()?.listen((movieList) {
-    //   setState(() {
-    //     mNowPlayingMovieList = movieList;
-    //   });
-    // }).onError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Popular Movies
-    // mMovieModel?.getPopularMovies(1)?.then((movieList) {
-    //   setState(() {
-    //     mPopularMovieList = movieList.take(7).toList();
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Popular Movies Database
-    // mMovieModel?.getPopularMoviesFromDatabase()?.listen((movieList) {
-    //   setState(() {
-    //     mPopularMovieList = movieList.take(7).toList();
-    //   });
-    // }).onError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Showcases
-    // mMovieModel?.getTopRatedMovies(1)?.then((movieList) {
-    //   setState(() {
-    //     mShowCaseMoviesList = movieList;
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Showcase Database
-    // mMovieModel?.getTopRatedMoviesFromDatabase()?.listen((movieList) {
-    //   setState(() {
-    //     mShowCaseMoviesList = movieList;
-    //   });
-    // }).onError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Genres
-    // mMovieModel?.getGenres()?.then((genreList) {
-    //   setState(() {
-    //     mGenresList = genreList;
-    //     int genreId = mGenresList?.first?.id ?? 0;
-    //
-    //     ///Movies by Genre
-    //     _getMovieByGenreAndRefresh(genreId);
-    //
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Genres Database
-    // mMovieModel?.getGenresFromDatabase()?.then((genreList) {
-    //   setState(() {
-    //     mGenresList = genreList;
-    //     int genreId = mGenresList?.first?.id ?? 0;
-    //
-    //     ///Movies by Genre
-    //     _getMovieByGenreAndRefresh(genreId);
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Actors
-    // mMovieModel?.getActors(1)?.then((actorList) {
-    //   setState(() {
-    //     mActorsList = actorList;
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    ///Actors Database
-  //   mMovieModel?.getAllActorsFromDatabase()?.then((actorList) {
-  //     setState(() {
-  //     mActorsList = actorList;
-  //   });
-  // }).catchError((error) {
-  // debugPrint(error.toString());
-  // });
-  // }
-
-  // void _getMovieByGenreAndRefresh(int genreId) {
-  //   mMovieModel?.getMoviesByGenre(genreId)?.then((movieList) {
-  //     setState(() {
-  //       mMoviesByGenreList = movieList;
-  //     });
-  //   }).catchError((error) {
-  //     debugPrint(error.toString());
-  //   });
-  }
-
-
-
-  void _navigateToMovieDetailScreen(BuildContext context, int movieId) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MovieDetailsPage(movieId),
-        ));
-  }
-
-  // void _getMoviesByGenerAndRefresh(int genreId) {
-  //   mMovieModel?.getMoviesByGenre(genreId)?.then((moviesByGenre) {
-  //     setState(() {
-  //       mMoviesByGenreList = moviesByGenre;
-  //     });
-  //   }).catchError((error) {
-  //     debugPrint(error.toString());
-  //   });
-  // }
-}*/
 
 class GenreSectionView extends StatelessWidget {
   final Function(int) onTapMovie;
@@ -329,6 +190,10 @@ class GenreSectionView extends StatelessWidget {
               onTapMovie(movieId);
             },
             movieList: moviesListByGenre,
+            onListEndReached: (){
+              HomeBloc bloc = Provider.of<HomeBloc>(context,listen: false);
+              bloc.onNowPlayingMoviesListEndReached();
+            },
           ),
         ),
       ],
@@ -411,58 +276,7 @@ class ShowCasesSection extends StatelessWidget {
   }
 }
 
-class BestPopularMoviesAndSerialsSectionView extends StatelessWidget {
-  final Function onTapMovie;
-  final List<MovieVO>? mNowPlayingMovieList;
 
-  BestPopularMoviesAndSerialsSectionView(
-      this.onTapMovie, this.mNowPlayingMovieList);
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: EdgeInsets.only(left: MARGIN_MEDIUM_2),
-          child: TitleText(MAIN_SCREEN_BEST_POPULAR_MOVIES_AND_SERIALS),
-        ),
-        SizedBox(height: MARGIN_MEDIUM_2),
-        HorizontalMovieListView(
-          (movieId) {
-            onTapMovie(movieId);
-          },
-          movieList: mNowPlayingMovieList,
-        ),
-      ],
-    );
-  }
-}
-
-class HorizontalMovieListView extends StatelessWidget {
-  final Function(int) onTapMovie;
-  final List<MovieVO>? movieList;
-
-  HorizontalMovieListView(this.onTapMovie, {this.movieList});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MOVIE_LIST_HEIGHT,
-      child: (movieList != null)
-          ? ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.only(left: MARGIN_MEDIUM),
-              itemCount: movieList?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                return MovieView((movieId) {
-                  this.onTapMovie(movieId);
-                }, movieList?[index]);
-              },
-            )
-          : Center(child: CircularProgressIndicator()),
-    );
-  }
-}
 
 class BannerSectionView extends StatefulWidget {
   Function(int) onTapBannerView;

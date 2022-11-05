@@ -50,8 +50,8 @@ class MovieModelImpl extends MovieModel {
   List<CreditVO>? mCreatorsList;
 
   @override
-  Future<List<MovieVO>>? getNowPlayingMovies(int page) {
-    return mDataAgent.getNowPlayingMovies(page)?.then((movies) async {
+  void getNowPlayingMovies(int page) {
+     mDataAgent.getNowPlayingMovies(page)?.then((movies) async {
       List<MovieVO> nowPlayingMovies = movies.map((movie) {
         movie.isNowPlaying = true;
         movie.isTopRated = false;
@@ -59,8 +59,7 @@ class MovieModelImpl extends MovieModel {
         return movie;
       }).toList();
       mMovieDao.saveMovies(nowPlayingMovies);
-      return Future.value(nowPlayingMovies);
-    });
+     });
   }
   // @override
   // void getNowPlayingMovies(int page) {
@@ -112,8 +111,8 @@ class MovieModelImpl extends MovieModel {
   }
 
   @override
-  Future<List<MovieVO>>? getPopularMovies(int page) {
-    return mDataAgent.getPopularMovies(page)?.then((movies) async {
+  void getPopularMovies(int page) {
+     mDataAgent.getPopularMovies(page)?.then((movies) async {
       List<MovieVO> popularMovies = movies.map((movie) {
         movie.isNowPlaying = false;
         movie.isTopRated = false;
@@ -121,16 +120,13 @@ class MovieModelImpl extends MovieModel {
         return movie;
       }).toList();
       mMovieDao.saveMovies(popularMovies);
-      return Future.value(popularMovies);
 
-      // mPopularMovieList = popularMovies;
-      // notifyListeners();
     });
   }
 
   @override
-  Future<List<MovieVO>>? getTopRatedMovies(int page) {
-    return mDataAgent.getTopRatedMovies(page)?.then((movies) async {
+  void getTopRatedMovies(int page) {
+     mDataAgent.getTopRatedMovies(page)?.then((movies) async {
       List<MovieVO> topRatedMovies = movies.map((movie) {
         movie.isNowPlaying = false;
         movie.isTopRated = true;
@@ -138,9 +134,6 @@ class MovieModelImpl extends MovieModel {
         return movie;
       }).toList();
       mMovieDao.saveMovies(topRatedMovies);
-      return Future.value(topRatedMovies);
-      // mShowCaseMoviesList = topRatedMovies;
-      // notifyListeners();
     });
   }
 
@@ -186,30 +179,30 @@ class MovieModelImpl extends MovieModel {
   //   ;
   // }
   @override
-  Future<List<MovieVO>>? getNowPlayingMoviesFromDatabase() {
+  Stream<List<MovieVO>>? getNowPlayingMoviesFromDatabase() {
     this.getNowPlayingMovies(1);
     return mMovieDao
         .getAllMoviesEventStream()
         .startWith(mMovieDao.getNowPlayingMoviesStream())
-    .map((event) => mMovieDao.getNowPlayingMovies()).first;
+    .map((event) => mMovieDao.getNowPlayingMovies());
   }
 
   @override
-  Future<List<MovieVO>>? getPopularMoviesFromDatabase() {
+  Stream<List<MovieVO>>? getPopularMoviesFromDatabase() {
     this.getPopularMovies(1);
     return mMovieDao
         .getAllMoviesEventStream()
         .startWith(mMovieDao.getPopularMoviesStream())
-        .map((event) => mMovieDao.getPopularMovies()).first;
+        .map((event) => mMovieDao.getPopularMovies());
   }
 
   @override
-  Future<List<MovieVO>>? getTopRatedMoviesFromDatabase() {
+  Stream<List<MovieVO>>? getTopRatedMoviesFromDatabase() {
     this.getTopRatedMovies(1);
     return mMovieDao
         .getAllMoviesEventStream()
         .startWith(mMovieDao.getTopRatedMoviesStream())
-        .map((event) => mMovieDao.getTopRatedMovies()).first;
+        .map((event) => mMovieDao.getTopRatedMovies());
 
   }
 

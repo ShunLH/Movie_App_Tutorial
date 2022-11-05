@@ -8,6 +8,7 @@ import 'package:movie_app/resources/dimens.dart';
 import 'package:movie_app/resources/strings.dart';
 import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
 import 'package:movie_app/widgets/gradient_view.dart';
+import 'package:movie_app/widgets/title_and_horizontal_movie_list_view.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/rating_view.dart';
@@ -73,14 +74,17 @@ class MovieDetailsPage extends StatelessWidget {
                                       :  Container();
                                 },
                               ),
-                              // (bloc.mCreatorsList != null &&
-                              //         bloc.mCreatorsList!.isNotEmpty)
-                              //     ? ActorsAndCreatorsSectionView(
-                              //         MOVIE_DETAIL_SCREEN_CREATORS_TITLE,
-                              //         MOVIE_DETAIL_SCREEN_CREATORS_SEE_MORE,
-                              //         mActorList: bloc.mCreatorsList,
-                              //       )
-                              //     : Container(),
+                              SizedBox(height: MARGIN_LARGE),
+                              Selector<MovieDetailsBloc,List<MovieVO>?>(
+                                selector: (context,bloc) => bloc.mRelatedMovies,
+                                builder: (context,relatedMoviesList,child){
+                                  return TitleAndHorizontalMovieListView((movieId) {
+                                    _navigateToMovieDetailScreen(context, movieId);
+                                  }, relatedMoviesList, title: MOVIE_DETAIL_SCREEN_RELATED_MOVIES, onListEndReached: (){
+
+                                  });
+                                },
+                              )
                             ],
                           ),
                         ),
@@ -92,6 +96,13 @@ class MovieDetailsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+  void _navigateToMovieDetailScreen(BuildContext context, int movieId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MovieDetailsPage(movieId),
+        ));
   }
 }
 

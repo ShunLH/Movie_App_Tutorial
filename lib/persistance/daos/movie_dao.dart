@@ -25,7 +25,7 @@ class MovieDao {
 
   List<MovieVO> getAllMovies() {
     List<MovieVO> movieListFromDatabase = getMovieBox().values.toList();
-    movieListFromDatabase.forEach((element) => print(element.title));
+    // movieListFromDatabase.forEach((element) => print(element.title));
     return movieListFromDatabase;
   }
 

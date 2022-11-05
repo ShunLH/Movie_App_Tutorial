@@ -18,6 +18,9 @@ class HomeBloc extends ChangeNotifier{
   List<MovieVO>? mShowcaseMoviesList;
   List<MovieVO>? mMoviesByGenreList;
 
+  /// Page
+  int pageForNowPlayingMovies = 1;
+
 
   /// Models
 
@@ -25,26 +28,26 @@ class HomeBloc extends ChangeNotifier{
 
   HomeBloc(){
     /// Now Playing Movies from Database
-    mMovieModel.getNowPlayingMoviesFromDatabase()?.then((movieList) {
+    mMovieModel.getNowPlayingMoviesFromDatabase()?.listen((movieList) {
       mNowPlayingMoviesList = movieList;
       notifyListeners();
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 
     /// Popular Movies from Database
-    mMovieModel.getPopularMoviesFromDatabase()?.then((movieList) {
+    mMovieModel.getPopularMoviesFromDatabase()?.listen((movieList) {
       mPopularMoviesList = movieList;
       notifyListeners();
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 
     /// ShowCases from Database
-    mMovieModel.getTopRatedMoviesFromDatabase()?.then((movieList) {
+    mMovieModel.getTopRatedMoviesFromDatabase()?.listen((movieList) {
       mShowcaseMoviesList = movieList;
       notifyListeners();
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
     /// Genres
@@ -95,6 +98,12 @@ class HomeBloc extends ChangeNotifier{
     }).catchError((error) {
       debugPrint(error.toString());
     });
+  }
+
+  void onNowPlayingMoviesListEndReached(){
+    this.pageForNowPlayingMovies += 1;
+    mMovieModel.getNowPlayingMovies(pageForNowPlayingMovies);
+
   }
 
 
