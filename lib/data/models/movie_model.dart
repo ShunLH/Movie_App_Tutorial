@@ -9,21 +9,21 @@ abstract class MovieModel extends Model{
 
 
 
-  void getNowPlayingMovies(int page);
-  void getPopularMovies(int page);
-  void getTopRatedMovies(int page);
-  void getGenres();
-  void getActors(int page);
-  void getMoviesByGenre(int genreId);
-  void getMovieDetails(int movieId);
-  void getCreditsByMovie(int movieId);
+  Future<List<MovieVO>>? getNowPlayingMovies(int page);
+  Future<List<MovieVO>>? getPopularMovies(int page);
+  Future<List<MovieVO>>? getTopRatedMovies(int page);
+  Future<List<GenreVO>>? getGenres();
+  Future<List<ActorVO>>? getActors(int page);
+  Future<List<MovieVO>>? getMoviesByGenre(int genreId);
+  Future<MovieVO>? getMovieDetails(int movieId);
+  Future<List<CreditVO>>? getCreditsByMovie(int movieId);
 
   //Database
-  void getTopRatedMoviesFromDatabase();
-  void getNowPlayingMoviesFromDatabase();
-  void getPopularMoviesFromDatabase();
-  void getGenresFromDatabase();
-  void getAllActorsFromDatabase();
-  void getMovieDetailsFromDatabase(int movieId);
+  Future<List<MovieVO>>? getTopRatedMoviesFromDatabase();
+  Future<List<MovieVO>>? getNowPlayingMoviesFromDatabase();
+  Future<List<MovieVO>>? getPopularMoviesFromDatabase();
+  Future<List<GenreVO>>? getGenresFromDatabase();
+  Future<List<ActorVO>>? getAllActorsFromDatabase();
+  Future<MovieVO>? getMovieDetailsFromDatabase(int movieId);
 
 }

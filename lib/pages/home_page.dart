@@ -13,13 +13,31 @@ import 'package:movie_app/viewitems/show_case_view.dart';
 import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
 import 'package:movie_app/widgets/title_text.dart';
 import 'package:scoped_model/scoped_model.dart';
+import '../blocs/home_bloc.dart';
 import '../resources/dimens.dart';
 import '../resources/strings.dart';
 import '../viewitems/movie_view.dart';
 import '../widgets/see_more_text.dart';
 import '../widgets/title_text_with_see_more_view.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  HomeBloc _bloc = HomeBloc();
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,56 +69,70 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (context, child, model) {
+              StreamBuilder(
+                stream: _bloc.mPopularMoviesListStreamController.stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<MovieVO>> snapshot) {
                   return BannerSectionView(
-                      model.mPopularMovieList,
-                          (movieId) =>
-                          _navigateToMovieDetailScreen(context, movieId,model));
+                      snapshot.data?.take(7)?.toList() ?? [], (movieId) {
+                    _navigateToMovieDetailScreen(context, movieId);
+                  });
                 },
               ),
               SizedBox(height: MARGIN_LARGE),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (context, child, model) {
+              StreamBuilder(
+                stream: _bloc.mNowPlayingStreamController.stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<MovieVO>> snapshot) {
                   return BestPopularMoviesAndSerialsSectionView(
-                          (movieId) =>
-                          _navigateToMovieDetailScreen(context, movieId,model),
-                      model.mNowPlayingMovieList);
+                      (movieId) =>
+                          _navigateToMovieDetailScreen(context, movieId),
+                      snapshot.data);
                 },
               ),
               SizedBox(height: MARGIN_LARGE),
               CheckMovieShowTimeSectionView(),
               SizedBox(height: MARGIN_LARGE),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (context, child, model) {
-                  return GenreSectionView(
-                    onTapMovie: (movieId) =>
-                        _navigateToMovieDetailScreen(context, movieId,model),
-                    genreList: model.mGenresList ?? [],
-                    moviesListByGenre: model.mMoviesByGenreList ?? [],
-                    onTapGenre: (genreId) {
-                      model.getMoviesByGenre(genreId);
+              StreamBuilder(
+                stream: _bloc.mGenreListStreamController.stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<GenreVO>> snapshot) {
+                  return StreamBuilder(
+                    stream: _bloc.mMoviesByGenreListStreamController.stream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> moviesByGenreSnapshot) {
+                      return GenreSectionView(
+                        onTapMovie: (movieId) =>
+                            _navigateToMovieDetailScreen(context, movieId),
+                        genreList: snapshot.data ?? [],
+                        moviesListByGenre: moviesByGenreSnapshot.data ?? [],
+                        onTapGenre: (genreId) {
+                          _bloc.getMoviesByGenreAndRefresh(genreId);
+                        },
+                      );
                     },
                   );
                 },
               ),
               SizedBox(height: MARGIN_LARGE),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder: (context,widget,model){
-                  return ShowCasesSection(model.mShowCaseMoviesList,
-                          (movieId) => _navigateToMovieDetailScreen(context, movieId,model));
+              StreamBuilder(
+                stream: _bloc.mShowCaseMovieListStreamController.stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<MovieVO>> snapshot) {
+                  return ShowCasesSection(
+                      snapshot.data,
+                      (movieId) =>
+                          _navigateToMovieDetailScreen(context, movieId));
                 },
               ),
               SizedBox(height: MARGIN_LARGE),
-              ScopedModelDescendant<MovieModelImpl>(
-                builder : (context,widget,model) {
-                  return ActorsAndCreatorsSectionView(
-                    BEST_ACTORS_TITLE,
-                    BEST_ACTORS_SEE_MORE,
-                    mActorList: model.mActorsList,
-                  );
-                },
-              ),
+              StreamBuilder(stream: _bloc.mActorsStreamController.stream, builder: (BuildContext context, AsyncSnapshot<List<ActorVO>> snapshot) {
+                return ActorsAndCreatorsSectionView(
+                  BEST_ACTORS_TITLE,
+                  BEST_ACTORS_SEE_MORE,
+                  mActorList: snapshot.data,
+                );
+              },),
               SizedBox(height: MARGIN_LARGE),
             ],
           ),
@@ -108,10 +140,11 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-  void _navigateToMovieDetailScreen(BuildContext context, int movieId,MovieModelImpl movieModel) {
-    movieModel.getMovieDetails(movieId);
-    movieModel.getMovieDetailsFromDatabase(movieId);
-    movieModel.getCreditsByMovie(movieId);
+
+  void _navigateToMovieDetailScreen(BuildContext context, int movieId) {
+    // movieModel.getMovieDetails(movieId);
+    // movieModel.getMovieDetailsFromDatabase(movieId);
+    // movieModel.getCreditsByMovie(movieId);
     Navigator.push(
         context,
         MaterialPageRoute(

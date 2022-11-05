@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/data/models/movie_model.dart';
-import 'package:movie_app/data/models/movie_model_impl.dart';
+import 'package:movie_app/blocs/movie_details_bloc.dart';
 import 'package:movie_app/data/vos/credit_vo.dart';
 import 'package:movie_app/data/vos/movie_vo.dart';
 import 'package:movie_app/network/responses/api_constants.dart';
@@ -9,112 +8,104 @@ import 'package:movie_app/resources/dimens.dart';
 import 'package:movie_app/resources/strings.dart';
 import 'package:movie_app/widgets/actors_and_creators_section_view.dart';
 import 'package:movie_app/widgets/gradient_view.dart';
-import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/rating_view.dart';
 import '../widgets/title_text.dart';
 
-class MovieDetailsPage extends StatelessWidget {
+class MovieDetailsPage extends StatefulWidget {
   final int movieId;
   MovieDetailsPage(this.movieId);
+
+  @override
+  State<MovieDetailsPage> createState() => _MovieDetailsPageState();
+}
+
+class _MovieDetailsPageState extends State<MovieDetailsPage> {
+  late MovieDetailsBloc _bloc;
+  @override
+  void initState() {
+    _bloc = MovieDetailsBloc(widget.movieId);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bloc.disposeStream();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ScopedModelDescendant<MovieModelImpl>(
-        builder: (context,widget,model){
+      body: StreamBuilder(
+        stream: _bloc.movieStreamController?.stream.asBroadcastStream(),
+        builder: (BuildContext context, AsyncSnapshot<MovieVO> snapshot) {
           return Container(
             color: HOME_SCREEN_BACKGROUND_COLOR,
-            child: (model.mMovie != null)
+            child: (snapshot.data != null)
                 ? CustomScrollView(
-              slivers: [
-                MovieDetailSliverAppBarView(
-                      () => Navigator.pop(context),
-                  model.mMovie,
-                ),
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      Container(
-                        margin:
-                        EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-                        child: TrailerSection(model.mMovie),
+                    slivers: [
+                      MovieDetailSliverAppBarView(
+                        () => Navigator.pop(context),
+                        snapshot.data,
                       ),
-                      SizedBox(height: MARGIN_LARGE),
-                      ActorsAndCreatorsSectionView(
-                        MOVIE_DETAIL_SCREEN_ACTORS_TITLE,
-                        "",
-                        mActorList: model.mActors,
-                        seeMoreButtonVisibility: false,
+                      SliverList(
+                        delegate: SliverChildListDelegate(
+                          [
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: MARGIN_MEDIUM_2),
+                              child: TrailerSection(snapshot.data),
+                            ),
+                            SizedBox(height: MARGIN_LARGE),
+                            StreamBuilder(
+                              stream: _bloc.actorsStreamController?.stream,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<CreditVO>>
+                                      actorsSnapshot) {
+                                return ActorsAndCreatorsSectionView(
+                                  MOVIE_DETAIL_SCREEN_ACTORS_TITLE,
+                                  "",
+                                  mActorList: actorsSnapshot.data,
+                                  seeMoreButtonVisibility: false,
+                                );
+                              },
+                            ),
+                            SizedBox(height: MARGIN_LARGE),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: MARGIN_MEDIUM_2),
+                              child: AboutFlimSectionView(snapshot.data),
+                            ),
+                            SizedBox(height: MARGIN_LARGE),
+                            StreamBuilder(
+                              stream: _bloc.creatorsStreamController?.stream,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<CreditVO>>
+                                      creatorsSnapshot) {
+                                if (creatorsSnapshot.hasData && creatorsSnapshot.data!.isEmpty == false) {
+                                  return ActorsAndCreatorsSectionView(
+                                    MOVIE_DETAIL_SCREEN_CREATORS_TITLE,
+                                    MOVIE_DETAIL_SCREEN_CREATORS_SEE_MORE,
+                                    mActorList: creatorsSnapshot.data,
+                                  );
+                                }else{
+                                  return Container();
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(height: MARGIN_LARGE),
-                      Container(
-                        padding:
-                        EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-                        child: AboutFlimSectionView(model.mMovie),
-                      ),
-                      SizedBox(height: MARGIN_LARGE),
-                      (model.mCreatorsList != null && model.mCreatorsList!.isNotEmpty)
-                          ? ActorsAndCreatorsSectionView(
-                        MOVIE_DETAIL_SCREEN_CREATORS_TITLE,
-                        MOVIE_DETAIL_SCREEN_CREATORS_SEE_MORE,
-                        mActorList: model.mCreatorsList,
-                      )
-                          : Container(),
                     ],
-                  ),
-                ),
-              ],
-            )
+                  )
                 : Center(child: CircularProgressIndicator()),
           );
         },
       ),
     );
   }
-
 }
-/*
-class _MovieDetailsPageState extends State<MovieDetailsPage> {
-  // MovieModel? mMovieModel = MovieModelImpl();
-  // MovieVO? mMovie;
-  // List<CreditVO>? mActorsList;
-  // List<CreditVO>? mCreatorsList;
-
-  @override
-  void initState() {
-    super.initState();
-    print("movie id ===> ${widget.movieId}");
-
-    /*
-    ///MovieDetail
-    mMovieModel?.getMovieDetails(widget.movieId)?.then((movie) {
-      setState(() {
-        this.mMovie = movie;
-      });
-    });
-
-    ///MovieDetail Database
-    mMovieModel?.getMovieDetailsFromDatabase(widget.movieId)?.then((movie) {
-      setState(() {
-        this.mMovie = movie;
-      });
-    });
-
-    mMovieModel?.getCreditsByMovie(widget.movieId)?.then((creditsList) {
-      setState(() {
-        this.mActorsList =
-            creditsList.where((credit) => credit.isActor()).toList();
-        this.mCreatorsList =
-            creditsList.where((credit) => credit.isCreator()).toList();
-      });
-    });
-    */
-
-  }
-
-
-}
- */
 
 class AboutFlimSectionView extends StatelessWidget {
   final MovieVO? mMovie;
