@@ -17,10 +17,10 @@ import 'package:movie_app/pages/movie_detail_page.dart';
 import 'package:movie_app/persistance/hive_constants.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-void main() async{
+void main() async {
   await Hive.initFlutter();
   // RetrofitDataAgentImpl().getMovieDetail(464052);
-  
+
   Hive.registerAdapter(ActorVOAdapter());
   Hive.registerAdapter(BaseActorVOAdapter());
   Hive.registerAdapter(CollectionVOAdapter());
@@ -31,11 +31,10 @@ void main() async{
   Hive.registerAdapter(ProductionCompaniesVOAdapter());
   Hive.registerAdapter(ProductionCountriesVOAdapter());
   Hive.registerAdapter(SpokenLanguagesVOAdapter());
-  
+
   await Hive.openBox<ActorVO>(BOX_NAME_ACTOR_VO);
   await Hive.openBox<MovieVO>(BOX_NAME_MOVIE_VO);
   await Hive.openBox<GenreVO>(BOX_NAME_GENRE_VO);
-
 
   runApp(const MyApp());
 }
@@ -46,18 +45,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScopedModel(
-      model: MovieModelImpl(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: HomePage(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: HomePage(),
     );
   }
 }

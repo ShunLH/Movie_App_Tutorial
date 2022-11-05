@@ -1,11 +1,10 @@
 import 'package:movie_app/data/vos/actor_vo.dart';
 import 'package:movie_app/data/vos/credit_vo.dart';
 import 'package:movie_app/data/vos/genre_vo.dart';
-import 'package:scoped_model/scoped_model.dart';
 
 import '../vos/movie_vo.dart';
 
-abstract class MovieModel extends Model{
+abstract class MovieModel{
 
 
 
