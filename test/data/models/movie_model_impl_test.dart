@@ -159,21 +159,23 @@ void main() {
 
     test("Get MovieDetails Test", () {
       expect(
-          movieModel.getMovieDetails(580489),
+          movieModel.getMovieDetails(1),
           completion(
             equals(getMockMoviesForTest().first),
           ));
     });
 
-    test("Get MovieDetails from Database Test", () {
+    test("Get MovieDetails from Database Test", () async{
+      await movieModel.getMovieDetails(1);
       expect(
-          movieModel.getMovieDetailsFromDatabase(580489),
+          movieModel.getMovieDetailsFromDatabase(1),
           completion(
             equals(getMockMoviesForTest().first),
           ));
     });
 
     test("Get Actors from Database Test", () async{
+      await movieModel.getActors(1);
       expect(
           movieModel.getAllActorsFromDatabase(),
           completion(
@@ -182,6 +184,7 @@ void main() {
     });
 
     test("Get Genres from Database Test", () async{
+      await movieModel.getGenres();
       expect(
           movieModel.getGenresFromDatabase(),
           completion(

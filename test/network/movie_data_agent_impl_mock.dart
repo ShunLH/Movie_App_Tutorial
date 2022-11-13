@@ -19,36 +19,36 @@ class MovieDataAgentImplMock extends MovieDataAgent {
 
   @override
   Future<List<GenreVO>>? getGenres() {
-    Future.value(getMockGenres());
+    return Future.value(getMockGenres());
   }
 
   @override
   Future<MovieVO>? getMovieDetail(int movieId) {
-    Future.value(getMockMoviesForTest().first);
+    return Future.value(getMockMoviesForTest().first);
   }
 
   @override
   Future<List<MovieVO>>? getMoviesByGenre(int genreId) {
-    Future.value(getMockMoviesForTest());
+    return Future.value(getMockMoviesForTest());
   }
 
   @override
   Future<List<MovieVO>>? getNowPlayingMovies(int page) {
-    Future.value(getMockMoviesForTest()
+    return Future.value(getMockMoviesForTest()
         .where((movie) => movie.isNowPlaying ?? false)
         .toList());
   }
 
   @override
   Future<List<MovieVO>>? getPopularMovies(int page) {
-    Future.value(getMockMoviesForTest()
+    return Future.value(getMockMoviesForTest()
         .where((movie) => movie.isPopular == true)
         .toList());
   }
 
   @override
   Future<List<MovieVO>>? getTopRatedMovies(int page) {
-    Future.value(getMockMoviesForTest()
+    return Future.value(getMockMoviesForTest()
         .where((movie) => movie.isTopRated == true)
         .toList());
   }
