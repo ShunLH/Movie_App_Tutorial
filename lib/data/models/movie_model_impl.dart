@@ -21,13 +21,13 @@ class MovieModelImpl extends MovieModel {
   }
 
   MovieModelImpl._internal(){
-    getNowPlayingMoviesFromDatabase();
-    getTopRatedMoviesFromDatabase();
-    getPopularMoviesFromDatabase();
-    getActors(1);
-    getAllActorsFromDatabase();
-    getGenres();
-    getGenresFromDatabase();
+    // getNowPlayingMoviesFromDatabase();
+    // getTopRatedMoviesFromDatabase();
+    // getPopularMoviesFromDatabase();
+    // getActors(1);
+    // getAllActorsFromDatabase();
+    // getGenres();
+    // getGenresFromDatabase();
   }
 
   /// Daos

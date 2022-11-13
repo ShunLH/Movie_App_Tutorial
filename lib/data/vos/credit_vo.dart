@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:movie_app/data/vos/base_actor_vo.dart';
 
 import '../../persistance/hive_constants.dart';
+import '../../resources/strings.dart';
 part 'credit_vo.g.dart';
 
 @JsonSerializable()
@@ -75,10 +76,21 @@ class CreditVO extends BaseActorVO {
     return knownForDepartment != KNOWN_FOR_DEPARTMENT_ACTING;
   }
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CreditVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          originalName == other.originalName;
+
+  @override
+  int get hashCode => id.hashCode ^ originalName.hashCode;
+
   @override
   String toString() {
     return 'CreditVO{adult: $adult, gender: $gender, id: $id, knownForDepartment: $knownForDepartment, originalName: $originalName, popularity: $popularity, castId: $castId, character: $character, creditId: $creditId, order: $order}';
   }
 }
 
-const String KNOWN_FOR_DEPARTMENT_ACTING = "Acting";
