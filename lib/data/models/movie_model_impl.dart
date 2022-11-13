@@ -9,6 +9,9 @@ import 'package:stream_transform/stream_transform.dart';
 
 import '../../persistance/daos/actor_dao.dart';
 import '../../persistance/daos/genre_dao.dart';
+import '../../persistance/daos/impl/actor_dao_impl.dart';
+import '../../persistance/daos/impl/genre_dao_impl.dart';
+import '../../persistance/daos/impl/movie_dao_impl.dart';
 import '../../persistance/daos/movie_dao.dart';
 
 class MovieModelImpl extends MovieModel {
@@ -21,19 +24,26 @@ class MovieModelImpl extends MovieModel {
   }
 
   MovieModelImpl._internal(){
-    getNowPlayingMoviesFromDatabase();
-    getTopRatedMoviesFromDatabase();
-    getPopularMoviesFromDatabase();
-    getActors(1);
-    getAllActorsFromDatabase();
-    getGenres();
-    getGenresFromDatabase();
+    // getNowPlayingMoviesFromDatabase();
+    // getTopRatedMoviesFromDatabase();
+    // getPopularMoviesFromDatabase();
+    // getActors(1);
+    // getAllActorsFromDatabase();
+    // getGenres();
+    // getGenresFromDatabase();
   }
 
   /// Daos
-  MovieDao mMovieDao = MovieDao();
-  GenreDao mGenreDao = GenreDao();
-  ActorDao mActorDao = ActorDao();
+  MovieDao mMovieDao = MovieDaoImpl();
+  GenreDao mGenreDao = GenreDaoImpl();
+  ActorDao mActorDao = ActorDaoImpl();
+
+  void setDaosAndDataAgents(MovieDao movieDao,GenreDao genreDao,ActorDao actorDao,MovieDataAgent movieDataAgent){
+    mMovieDao = movieDao;
+    mGenreDao = genreDao;
+    mActorDao = actorDao;
+    mDataAgent = movieDataAgent;
+  }
 
   ///States
   /// Home Pate

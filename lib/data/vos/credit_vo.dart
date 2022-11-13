@@ -75,6 +75,15 @@ class CreditVO extends BaseActorVO {
     return knownForDepartment != KNOWN_FOR_DEPARTMENT_ACTING;
   }
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CreditVO && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
   @override
   String toString() {
     return 'CreditVO{adult: $adult, gender: $gender, id: $id, knownForDepartment: $knownForDepartment, originalName: $originalName, popularity: $popularity, castId: $castId, character: $character, creditId: $creditId, order: $order}';

@@ -161,6 +161,19 @@ class MovieVO {
   Map<String,dynamic> toJson() => _$MovieVOToJson(this);
 
   @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MovieVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          productionCountries == other.productionCountries &&
+          title == other.title;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ productionCountries.hashCode ^ title.hashCode;
+
+  @override
   String toString() {
     return 'MovieVO{adult: $adult, backDropPath: $backDropPath, genreIds: $genreIds, belongsToCollection: $belongsToCollection, budget: $budget, genres: $genres, homePage: $homePage, id: $id, imdbId: $imdbId, originalLanguage: $originalLanguage, originalTitle: $originalTitle, overview: $overview, popularity: $popularity, posterPath: $posterPath, productionCompanies: $productionCompanies, productionCountries: $productionCountries, releaseDate: $releaseDate, revenue: $revenue, runtime: $runtime, spokenLanguages: $spokenLanguages, status: $status, tagline: $tagline, title: $title, video: $video, voteAverage: $voteAverage, voteCount: $voteCount}';
   }

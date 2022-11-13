@@ -78,7 +78,7 @@ class HomePage extends StatelessWidget {
                         (movieId) =>
                             _navigateToMovieDetailScreen(context, movieId),
                         nowPlayingList,onListEndReached: (){
-                          var bloc = Provider.of<HomeBloc>(context,listen: false);
+                          var bloc = Provider.of<HomeBloc>(context,listen: true);
                           bloc.onNowPlayingMoviesListEndReached();
                     },);
                   },
